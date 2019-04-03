@@ -1,0 +1,17 @@
+
+data {
+  for (i in 1:length(y)) {
+    z[i] <- log(y[i])
+  }
+}
+
+model {
+  for (i in 1:length(z)) {
+    z[i] ~ dnorm(mu, tausq)
+  }
+  mu ~ dnorm(0, 0.0001)
+  tausq ~ dgamma(0.0001, 0.0001)
+
+  sigmasq <- 1/tausq
+  expmu <- exp(mu)
+}

@@ -1,0 +1,20 @@
+
+data {
+  for (i in 1:length(y)) {
+    z[i] <- log(y[i])
+  }
+}
+
+model {
+  for (i in 1:length(z)) {
+    z[i] ~ dnorm(mu, tausq)
+  }
+
+  mu ~ dnorm(0, 0.0001)
+  tausq ~ dgamma(0.0001, 0.0001)
+
+  znew ~ dnorm(mu, tausq)
+  log(ynew) <- znew
+
+  ynew.le.30 <- ynew <= 30
+}

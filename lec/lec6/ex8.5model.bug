@@ -1,0 +1,5 @@
+
+model {
+  y ~ dbin(pi, n)
+  pi ~ dbeta(alpha, beta)
+}
