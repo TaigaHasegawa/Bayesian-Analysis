@@ -1,0 +1,82 @@
+---
+title: "STAT431_HW2"
+author: "Taiga Hasegawa(taigah2)"
+date: "2019/2/13"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Question1
+
+(a)
+
+The posterior density function for uniform prior is 
+
+$\frac{\Gamma(72)}{\Gamma(7)\Gamma(65)}\pi^{6}(1-\pi)^{64}$.
+
+
+```{r}
+n=70
+y=6
+dx <- 1/1000  # pi grid spacing
+pi.grid <- seq(0, 1, dx)
+flat.prior <- dunif(pi.grid,0,1)
+post.unscaled <- flat.prior * dbinom(y,n,pi.grid)
+posterior <- post.unscaled / sum(post.unscaled * dx)
+plot(pi.grid, posterior, type="l",
+     xlab=expression(pi), main="Posterior: Flat Prior")
+```
+
+The posterior density function for beta prior is 
+
+$\frac{\Gamma(170)}{\Gamma(106)\Gamma(164)}\pi^{105}(1-\pi)^{163}$.
+
+```{r}
+beta.prior <- dbeta(pi.grid,100,100)
+post.unscaled <- beta.prior * dbinom(y,n,pi.grid)
+posterior <- post.unscaled / sum(post.unscaled * dx)
+plot(pi.grid, posterior, type="l",
+     xlab=expression(pi), main="Posterior: Beta Prior")
+```
+
+(b)
+```{r}
+#posterior mean when uniform prior 
+mean1=(6+1)/(70+1+1)
+#postrior mean when beta prior
+mean2=(6+100)/(70+100+100)
+#posterior standard deviation when uniform prior
+std1=sqrt((6+1)*(64+1)/(6+1+64+1)^2*(6+1+64+1+1))
+#posterior standard deviation when beta prior 
+std2=sqrt((6+100)*(64+100)/(6+100+64+100)^2*(6+100+64+100+1))
+```
+
+When we used uniform prior, posterior mean was `r mean1` and standard deviation was `r std1`.
+When we used beta prior, posterior mean was `r mean2`  and standard deviation was `r std2`.
+
+(c)
+```{r}
+#95% equal-tailed credible interval of uniform prior
+qbeta(c(0.025, 0.975), y+1, n-y+1)
+```
+
+```{r}
+#95% equal-tailed credible interval of beta prior
+qbeta(c(0.025, 0.975), y+100, n-y+100)
+```
+
+(d)
+```{r}
+#posterior probabilities of H0 of uniform prior
+1 - pbeta(0.2, y+1, n-y+1)
+```
+The null hypothesis was rejected. We are in favor of  alternative.
+
+```{r}
+#posterior probabilities of H0 of beta prior 
+1 - pbeta(0.2, y+100, n-y+100)
+```
+The null hypothesis was not rejected . 
