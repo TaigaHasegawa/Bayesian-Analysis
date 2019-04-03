@@ -1,0 +1,96 @@
+---
+title: "STAT431_HW3"
+author: "Taiga Hasegawa(taigah2)"
+date: "2019/2/27"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Question1
+(a)
+```{r}
+x=c(481,144,93,446,69,170,383,63,79,181)
+logx=log(x)
+ybar=mean(logx)
+s=sd(logx)
+n=length(logx)
+mu0=0
+kappa=1
+```
+
+```{r}
+sigma.2.prior.mean=1
+sigma.2.prior.var=1
+alpha=sigma.2.prior.mean^2 / sigma.2.prior.var + 2
+beta=(alpha-1) * sigma.2.prior.mean
+```
+The prior distribution is normal-inverse gamma distribution. The mean of normal distribution is `r mu0` and variance is `r kappa` and $\alpha$ is `r alpha` and $\beta$ is `r beta`
+
+(b)
+```{r}
+mu1=(kappa*mu0+n*ybar)/(kappa+n)
+tau1square=(alpha + n/2) / (beta + 0.5 * (n-1)*s^2 +0.5 * kappa*n*(mu0-ybar)^2/(kappa + n))
+mu.posterior.location=mu1
+mu.posterior.scale=1/(tau1square*(kappa+n))
+mu.posterior.df=2*alpha+n
+```
+
+The posterior marginal distribution of $\mu$ is t distirbution. The location is `r mu.posterior.location`, the scale is `r mu.posterior.scale` and the degree of freedom is `r mu.posterior.df`.
+
+(c)
+```{r}
+mu.posterior.mean=mu.posterior.location
+mu.posterior.var=(mu.posterior.df/ (mu.posterior.df - 2)) * mu.posterior.scale
+mu.posterior.location+qt(c(0.025, 1-0.025), mu.posterior.df) * sqrt(mu.posterior.scale)
+```
+
+(d)
+```{r}
+alpha.posterior=alpha + n/2
+beta.posterior=beta + 0.5 * (n-1)*s^2 +0.5 * kappa*n*(mu0-ybar)^2/(kappa + n)
+```
+
+The posterior marginal distribution of $\sigma^2$ is inverse gamma distribution with $\alpha$ `r alpha.posterior` and $\beta$ `r beta.posterior`.
+
+(e)
+```{r}
+1 / qgamma(c(1-0.025, 1-0.975), alpha.posterior, beta.posterior)
+```
+
+##Question2
+(a)
+```{r}
+mu.location=ybar
+mu.scale=s^2/n
+mu.df=n-1
+```
+
+The posterior marginal distribution of $\mu$ is t distribution. The location is `r mu.location` and scale is `r mu.scale` and degree of freedom is `r mu.df`.
+
+(b)
+```{r}
+mu.posterior.mean=ybar
+mu.posterior.var=(n-1) * mu.scale / (n-3)
+ybar + qt(c(0.025, 1-0.025), n-1) * sqrt(mu.scale)
+```
+
+(c)
+```{r}
+alpha.posterior=(n-1) / 2
+beta.posterior=(n-1)*s^2/2
+```
+
+The posterior marginal distribution of $\sigma^2$ is inverse gamma distribution with $\alpha$  `r alpha.posterior` and $\beta$ `r beta.posterior`.
+
+(d)
+```{r}
+(n-1) * s^2 / qchisq(c(1-0.025, 1-0.975), n-1)
+```
+
