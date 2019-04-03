@@ -1,0 +1,21 @@
+ y   t
+ 1   0.08  # Aerospatiale Concorde
+ 9   8.0   # Airbus A300
+ 5   2.7   # Airbus A310
+ 4   6.0   # Airbus A319/320/321
+46  70.0   # Boeing 727
+47  76.0   # Boeing 737
+24  14.8   # Boeing 747
+ 4   7.2   # Boeing 757
+ 3   6.5   # Boeing 767
+ 4   4.5   # British Aerospace BAe 146
+28   7.5   # Embraer 110 Bandeirante
+ 5   7.0   # Embraer 120 Brasilia
+20   8.5   # Fokker F-28
+ 3   4.5   # Fokker F-70/F-100
+ 5   5.5   # Lockheed L-1011 Tristar
+42  55.5   # McDonnell Douglas DC-9
+15   7.6   # McDonnell Douglas DC-10
+ 9  20     # McDonnell Douglas MD-80
+ 4   0.7   # McDonnell Douglas MD-11
+ 3   9.0   # Saab 340

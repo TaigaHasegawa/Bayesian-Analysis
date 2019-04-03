@@ -1,0 +1,27 @@
+
+data {
+  dimy <- dim(y)
+  batches <- dimy[1]
+  samples <- dimy[2]
+}
+
+model {
+  for (i in 1:batches) {
+
+    for (j in 1:samples) {
+      y[i,j] ~ dnorm(mu[i], tausqW)
+    }
+
+    mu[i] ~ dnorm(mu0, tausqB)
+  }
+
+  mu0 ~ dnorm(0, 0.000001)
+
+  tausqW ~ dgamma(0.001, 0.001)
+  tausqB ~ dgamma(0.001, 0.001)
+
+  sigmasqW <- 1 / tausqW
+  sigmasqB <- 1 / tausqB
+
+  rho <- sigmasqB / (sigmasqB + sigmasqW)
+}

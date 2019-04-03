@@ -1,0 +1,16 @@
+
+model {
+  for (i in 1:length(y)) {
+    y[i] ~ dpois(ymean[i])
+    ymean[i] <- lambda[i] * t[i]
+    lambda[i] ~ dgamma(alpha, beta)
+  }
+
+  alpha ~ dexp(1)
+  beta ~ dexp(1)
+
+  lambdamean <- alpha / beta
+  lambdavar <- alpha / beta^2
+
+  lambdanew ~ dgamma(alpha, beta)
+}
