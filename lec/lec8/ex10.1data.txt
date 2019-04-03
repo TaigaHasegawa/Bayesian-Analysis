@@ -1,0 +1,19 @@
+# Data from https://www.floridamuseum.ufl.edu/shark-attacks/trends/location/world/
+# and earlier versions of that site and press releases
+# Reported total shark attacks (y) by year (x) (worldwide)
+# Notice that the 2018 value is missing (will be predicted)
+x     y
+2005  58
+2006  59
+2007  70
+2008  55
+2009  68
+2010  82
+2011  79
+2012  83
+2013  77
+2014  73
+2015  98
+2016  81
+2017  88
+2018  NA
