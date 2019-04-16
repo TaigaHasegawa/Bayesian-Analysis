@@ -1,0 +1,14 @@
+
+model {
+  for (i in 1:length(psihat)) {
+    psihat[i] ~ dnorm(psi[i],tausq[i])
+    psi[i] ~ dnorm(psi0,tausq0)
+    tausq[i] <- 1 / sigma[i]^2
+  }
+
+  psi0 ~ dnorm(0,0.001)
+
+  tausq0 ~ dgamma(0.001,0.001)
+
+  sigmasq0 <- 1/tausq0
+}

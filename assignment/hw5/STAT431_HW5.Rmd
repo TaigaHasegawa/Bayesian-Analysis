@@ -1,0 +1,70 @@
+---
+title: "STAT431_HW5"
+author: "Taiga Hasegawa(taigah2)"
+date: "2019/4/10"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Question1
+
+(a) 
+
+$\sigma^2_1=\sigma^2_2=\sigma^2$ In this case, $Y_i\mid Z, \sigma^2 \sim i.i.d.N(0,1+\sigma^2)$ and Y is exchangeable.
+
+(b) 
+
+$Cov(Y_1,Y_2)=E[Y_1Y_2]=E[(Z+\epsilon_1)(Z+\epsilon_2)]=E[Z^2]=Var(Z)=1$
+
+Z is independent each other.
+
+#Question2
+(b)
+
+model {
+
+  for (i in 1:length(psihat)) {
+  
+    psihat[i] ~ dnorm(psi[i],tausq[i])
+    
+    psi[i] ~ dnorm(psi0,tausq0)
+    
+    tausq[i] <- 1 / sigma[i]^2
+    
+  }
+
+  psi0 ~ dnorm(0,0.001)
+
+  tausq0 ~ dgamma(0.001,0.001)
+
+  sigmasq0 <- 1/tausq0
+  
+}
+
+(c)
+```{r}
+library(rjags)
+d <- read.table("hw5.txt", header=TRUE)
+inits=list(list(psi0=0.1,tausq0=0.0001),list(psi0=5,tausq0=1),list(psi0=10,tausq0=0.01))
+m=jags.model("prob2.bug",d,inits,n.chains = 3)
+```
+```{r}
+x <- coda.samples(m, c("psi0","sigmasq0"), n.iter=20000)
+gelman.plot(x, autoburnin=FALSE, ask=TRUE)
+```
+```{r}
+x <- coda.samples(m, c("psi0","sigmasq0"), n.ite=150000)
+gelman.plot(x, autoburnin=FALSE, ask=TRUE)
+```
+
+20000 iterations should be burned out because shrink factor of all variables becomes significantly below 1.05 after 20000 iterations.
+
+(d)
+```{r}
+summary(window(x, 20001, 170000))
+plot(window(x, 20001, 170000), trace=FALSE, ask=TRUE)
+```
+
