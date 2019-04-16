@@ -1,0 +1,22 @@
+
+data {
+  xmean <- mean(x)
+  for(i in 1:length(x)) {
+    xcent[i] <- x[i] - xmean
+  }
+}
+model {
+  for(i in 1:length(y)) {
+    y[i] ~ dpois(lambda[i])
+    log(lambda[i]) <- beta0 + beta1 * xcent[i]
+
+    yrep[i] ~ dpois(lambda[i])
+  }
+
+  chisq <- sum((y - lambda)^2 / lambda)
+  chisqrep <- sum((yrep - lambda)^2 / lambda)
+  pb.ind <- chisqrep >= chisq
+
+  beta0 ~ dnorm(0, 40)
+  beta1 ~ dnorm(0, 40)
+}

@@ -1,0 +1,21 @@
+
+data {
+  dim.Y <- dim(Y)
+}
+model {
+  for(i in 1:dim.Y[1]) {
+
+    for(j in 1:dim.Y[2]) {
+      Y[i,j] ~ dnorm(mu[i,j], tausq.y)
+      mu[i,j] <- beta0 + beta1 * (x[j] - xbar)
+    }
+
+  }
+
+  tausq.y ~ dgamma(0.001, 0.001)
+  sigma.y <- 1 / sqrt(tausq.y)
+
+  beta0 ~ dnorm(0.0, 1.0E-6)
+  beta1 ~ dnorm(0.0, 1.0E-6)
+}
+
