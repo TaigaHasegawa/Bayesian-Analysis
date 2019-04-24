@@ -1,0 +1,23 @@
+
+model{
+  oxfordwin[1] ~ dbern(pi[1])
+  logit(pi[1]) <- beta0 + beta1 * yearstand[1] + z[1]
+
+  z[1] ~ dnorm(0, tausq)
+
+  for(t in 2:length(oxfordwin)){
+    oxfordwin[t] ~ dbern(pi[t])
+    logit(pi[t]) <- beta0 + beta1 * yearstand[t] + z[t]
+
+    z[t] ~ dnorm(rho * z[t-1], tausq / (1 - rho^2))
+  }
+
+  beta0 ~ dt(0, 0.01, 1)
+  beta1 ~ dt(0, 0.5, 1)
+  rho ~ dunif(-1, 1)
+  tausq ~ dgamma(2.5, 1.5)
+
+  sigmasq <- 1 / tausq
+
+  rho.gt.0 <- rho > 0
+}

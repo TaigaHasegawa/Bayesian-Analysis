@@ -1,0 +1,10 @@
+model {
+  for(i in 1:length(y)) {
+    y[i] ~ dt(mu, 1/sigmasq, 1/nuinv)
+    yrep[i] ~ dt(mu, 1/sigmasq, 1/nuinv)
+  }
+
+  mu ~ dnorm(0, 0.00000001)
+  sigmasq ~ dgamma(0.00001, 0.00001)
+  nuinv ~ dunif(0, 1)
+}
