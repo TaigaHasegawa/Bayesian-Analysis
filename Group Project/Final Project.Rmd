@@ -1,0 +1,81 @@
+---
+title: "Final Project -STAT431-"
+author: "Taiga Hasegawa"
+date: "2019/4/29"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# INTRODUCTION
+  Unlike the classical machine learning algorithm, bayesian methods do not attempt to get the best fit by convex optimization. Instead they make the posterior inference by incorporating prior knowledge and come with uncertainty quantification. We focused on Gaussian Process, which was kernel-based fully Bayesian regression algorithm. It is thought to be useful and flexible because it does not overfit and can produce uncertainty quantification.
+  
+# GAUSSIAN PROCESS
+
+## What is gaussian process
+  Assume stochastic process $x_{1},x_{2},\cdot\cdot x_{N}: x_{n}\in X$, indexed by elements from some set $X$. A Gaussian Process  defines a **distribution over function** $p(f)$, where $f: X\rightarrow \mathbb{R}$ is a function mapping some input X to $\mathbb{R}$ and $p(f)$ is a Gaussian process only if for any finite subset {$x_{1}\cdot \cdot \cdot x_{N}\in X$}, the marginal distribution over the finite subspace $p(f)$ with f:=($f(x_1),\cdot \cdot \cdot, f(x_N)$) is multivariate Gaussian.
+
+$$p(f)=\left[\begin{array}{llll}f(x_1)\\ \cdot \\ \cdot \\f(x_N)\end{array}\right]\sim N \left( \begin{array}{l} \begin{pmatrix}m(x_1)\\\cdot\\\cdot\\m(x_N)\end{pmatrix},\begin{pmatrix}k(x_1,x_2) & \cdot & \cdot & k(x_1,x_N)\\\cdot  & \cdot & \quad & \cdot \\\cdot  & \quad & \cdot & \cdot \\k(x_N,x_1) & \cdot & \cdot & k(x_N,x_N)\end{pmatrix}\end{array} \right)$$
+  
+  Gaussian process is parameterized by a mean function , $\mu(x)$ and a covariance function, or kernel $K(x,x^{\prime})$. Using notation, it can be written like 
+$$f(\cdot)\sim GP(m(\cdot),k(\cdot,\cdot))$$
+Intuitively, one can think of a function $f(\cdot)$ drawn from Gaussian process as an extremely y high-dimensional vector from an extremely high-dimensional multivariate
+Gaussian. Using the marginalization property for multivariate Gaussians, we can obtain the marginal multivariate Gaussian density corresponding to any finite subcollection of variables. This is why, Gaussian process is probability distribution over functions with infinite domains. 
+
+ In general , any real-valued function $m(\cdot)$ is acceptable and 
+ $$K=\begin{pmatrix}k(x_1,x_2) & \cdot & \cdot & k(x_1,x_N)\\\cdot  & \cdot & \quad & \cdot \\\cdot  & \quad & \cdot & \cdot \\k(x_N,x_1) & \cdot & \cdot & k(x_N,x_N)\end{pmatrix}$$
+ must be positive semi definite because this condition is necessary for covariance matrix of Gaussian distribution. 
+  
+## Kernel function
+
+ What kind of kernel density is used for Gaussian process. The most popular one would be squared exponential kernel function, defined as 
+ $$k(x,x^{\prime})=exp(-\kappa^2\frac{1}{2\tau^2}||x-x^{\prime}||^2_F)$$
+where $\tau, \kappa^2$ is hyper parameter. Here $tau$ controls the correlation length and $\kappa$ accounts for the height of oscillations. In this case, for any pair of $x,x^{\prime}\in X$, $f(x),f(x^{\prime})$ tend to have high covariance when $x$ and $x^{\prime}$ are nearby in the input space(i.e. $||x-x^{\prime}||\approx0, exp(-\frac{1}{2\tau^2}||x-x^{\prime}||^2\approx1)$). On the other hand, when $x$ and $x^{\prime}$ are far apart, $f(x)$ and $f(x^{\prime})$ tend to have low covariance.
+ 
+ There are other kernel functions such as Matern process, Ornstein-Uhlenbeck (OU) process and Wiener process. It is also possible to make new kernel functions by adding or multiplying several kernel functions. 
+ 
+## Gaussian process regression model
+
+  Let $X,Y=\{(x^{(i)},y^{(i)})\}_{i=1}^N$ be a training data of i.i.d. examples from some unknown distribution. In the Gaussian process regression model, 
+  $$y^{(i)}=f(x^{(i)})+\epsilon^{(i)}, i=1\cdot \cdot N$$
+  where $\epsilon^{(i)}$ is i.i.d. noise with $N(0,\sigma^2)$. Like in Bayesian regression, we assume a prior distribution over function is 
+  $$f(\cdot)\sim N(0,K)$$
+, where K is some kernel function. Now let $X^*,Y^*=\{(x^{(i)}_{*},y^{(i)}_{*})\}_{i=1}^{N_*}$ be test data drawn from the same unknown distribution as S. 
+ For any function f(·) drawn from our zero-mean Gaussian process prior with covariance function k(·, ·), the marginal distribution over any set of input points belonging to X must have a joint multivariate Gaussian distribution. So, 
+$$\left[\begin{array}{ll}f(\cdot)\\ f^*(\cdot)\end{array}\right]|X,X^*\sim N(0,\begin{pmatrix}K(X,X) &K(X,X^*)\\K(X^*,X) & K(X^*,X^*)\end{pmatrix})$$
+  For i.i.d. noise, 
+  $$\left[\begin{array}{ll}\epsilon\\ \epsilon^*\end{array}\right]\sim N(0,\begin{pmatrix}\sigma^2I & 0 \\0 & \sigma^2I \end{pmatrix})$$
+Because the sum of independent Gaussian random variables are also Gaussian, the conditional distribution of $y$ and $y^*$ is 
+$$\left[\begin{array}{ll}y\\ y^*\end{array}\right]|X,X^*=\left[\begin{array}{ll}f(\cdot)\\ f^*(\cdot)\end{array}\right]+\left[\begin{array}{ll}\epsilon\\ \epsilon^*\end{array}\right]\sim N(0,\begin{pmatrix}K(X,X)+\sigma^2I & K(X,X^*) \\K(X^*,X) & K(X^*,X^*)+\sigma^2I \end{pmatrix})$$
+By using the those he posterior predictive distribution is 
+  $$y^{*}|y,X,X^{*}\sim N(\mu^*,\Sigma^*)$$
+where
+$$\mu^*=K(X,X^*)(K(X,X)+\sigma^2I)^{-1}K(X,X^*)$$
+$$\Sigma^*=K(X^*,X^*)+\sigma^2I-K(X^*,X)(K(X,X)+\sigma^2I)^{-1}K(X,X^*)$$
+## Gaussian process classification model (Seung)
+
+# Connection between Gaussian process regression and Bayesian regression 
+We use the same notation as above for train data and test data. First we look at Bayesian regression. We assume D polynomial function is $\phi()$ and weight parameter is $w$ in this section.
+$$y|X,w\sim N(w^T\phi(\cdot),\frac{1}{\tau})$$
+The prior distribution for $w$ is 
+$$w\sim N(0,\frac{1}{T})$$
+where $T$ is D*D precision. In this case, the posterior predictive distribution is 
+$$y^*|y,X^*,X\sim N(\mu_*,\frac{1}{T_*})$$
+where 
+$$\mu_*=$$
+
+# Connection between Gaussian process and neural network (Taiga)
+
+# Connection with time series (Yinghao)
+
+# Data analysis (?)
+
+### Data description
+
+### Explanatory analysis
+
+### Analysis using Gaussian process 
+
