@@ -1,0 +1,19 @@
+model
+{
+  # Likelihood
+  y ~ dmnorm(Mu, Sigma.inv)
+  Sigma.inv <- inverse(Sigma)
+  # Set up mean and covariance matrix
+  for(i in 1:T) {
+    Mu[i] <- alpha
+    Sigma[i,i] <- pow(sigma, 2) + pow(tau, 2)
+    for(j in (i+1):T) {
+      Sigma[i,j] <- pow(tau, 2) * exp( - rho * pow(t[i] - t[j], 2) )
+      Sigma[j,i] <- Sigma[i,j]
+    }
+  }
+  alpha ~ dnorm(0, 0.01)
+  sigma ~ dunif(0, 10)
+  tau ~ dunif(0, 10)
+  rho ~ dunif(0.1, 5)
+}
