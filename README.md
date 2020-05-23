@@ -1,7 +1,7 @@
 # Bayesian-Analysis
 This repo is what I've learned in STAT431 at University of Illinois at Urbana Champaign
 
-1. Generate Test Data
+## 1. Generate Test Data
 
 To make the dataset, please run the following code
 
@@ -12,21 +12,21 @@ To make the dataset, please run the following code
 
 The output file is saved as pos.csv under Data folder.
 
-2. Aggregation
+## 2. Aggregation
 
-2.1. Total sales for each year, month and shop
+### 2.1. Total sales for each year, month and shop
 
 `python sales_by_shops.py`
 
 Output is saved as sales_by_shops.csv under Data folder.
 
-2.2. Total sales for each year, month and goods
+### 2.2. Total sales for each year, month and goods
 
 `python sales_by_goods.py`
 
 Output is saved as sales_by_goods.csv under Data folder.
 
-2.3. Unit Value for each day and goods
+### 2.3. Unit Value for each day and goods
 
 `python unit_value.py`
 
